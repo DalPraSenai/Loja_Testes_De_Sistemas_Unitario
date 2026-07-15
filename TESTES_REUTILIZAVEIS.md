@@ -28,25 +28,25 @@ public class CarrinhoDeComprasTests
     public void AdicionarItem_CalcularSubTotal_AdicionarItemNovo_CalcularSubtotalCorretamente()
     {
         // Arrange
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
+        CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
 
         // Act
-        carrinho.AdicionarItem("Chaveiro", 12, 1);
+        carrinhoDeCompras.AdicionarItem("Chaveiro", 12, 1);
 
         // Assert
-        Assert.Equal(12, carrinho.CalcularSubtotal());
+        Assert.Equal(12, carrinhoDeCompras.CalcularSubtotal());
     }
 
     // Teste 2
     [Fact(DisplayName = "Adicionar o mesmo item duas vezes")]
-    public void AdicionarItem_CalcularSubtotal_AdicionarItemDuasVezes_SomarQuantidadeSemDuplicar()
+    public void AdicionarItem_CalcularSubTotal_AdicionarMesmoItemDuasVezes_CalcularSubtotalCorretamente()
     {
         // Arrange
         CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
 
         // Act
-        carrinhoDeCompras.AdicionarItem("Pantufa", 300, 2);
-        carrinhoDeCompras.AdicionarItem("Pantufa", 300, 1);
+        carrinhoDeCompras.AdicionarItem("pantufa", 300, 2);
+        carrinhoDeCompras.AdicionarItem("pantufa", 300, 1);
 
         // Assert
         Assert.Single(carrinhoDeCompras.Itens);
@@ -56,7 +56,7 @@ public class CarrinhoDeComprasTests
 
     // Teste 3
     [Fact(DisplayName = "Adicionar item com preço inválido")]
-    public void AdicionarItem_PrecoInvalido_LancaArgumentException()
+    public void AdicionarItem_PrecoInvalido_lancaArgumento()
     {
         // Arrange
         CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
@@ -68,58 +68,63 @@ public class CarrinhoDeComprasTests
     }
 
     // Teste 4
-    [Fact(DisplayName = "Não adicionar item com quantidade inválida")]
-    public void AdicionarItem_QuantidadeInvalida_LancarArgumentException()
+    [Fact(DisplayName = "Adicionar item com quantidade inválida")]
+    public void AdicionarItem_QuantidadeInvalida_lancaArgumento()
     {
         // Arrange
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
+        CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
 
-        // Act / Assert
-        Assert.Throws<ArgumentException>(() =>
-            carrinho.AdicionarItem("Cadeira", 300, 0));
+        // Act e Assert
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            carrinhoDeCompras.AdicionarItem("Mochila", 90, -1));
+        Assert.Equal("A quantidade deve ser positiva. (Parameter 'quantidade')", exception.Message);
     }
 
     // Teste 5
-    [Fact(DisplayName = "Remover item existente")]
-    public void RemoverItem_CalcularSubtotal_RemoverItemExistente_RecalcularSubtotal()
+    [Fact(DisplayName = "Remover um item existente")]
+    public void AdicionarItem_RemoverItem_CalcularSubTotal_RemoverItemExistente_ItemRemovido()
     {
         // Arrange
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        carrinho.AdicionarItem("Notebook", 3000, 1);
-        carrinho.AdicionarItem("Mouse", 50, 2);
+        CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
+        carrinhoDeCompras.AdicionarItem("Mochila", 50, 2);
+        carrinhoDeCompras.AdicionarItem("caderno", 30, 3);
 
         // Act
-        carrinho.RemoverItem("Notebook");
+        carrinhoDeCompras.RemoverItem("Mochila");
 
         // Assert
-        Assert.Equal(100, carrinho.CalcularSubtotal());
+        Assert.Equal(90, carrinhoDeCompras.CalcularSubtotal());
+        Assert.Single(carrinhoDeCompras.Itens);
     }
 
     // Teste 6
-    [Fact(DisplayName = "Não remover item inexistente")]
-    public void RemoverItem_ItemInexistente_LancarInvalidOperationException()
+    [Fact(DisplayName = "Remover um item cujo nome não está no carrinho")]
+    public void AdicionarItem_RemoverItem_LancaArgumentException()
     {
         // Arrange
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
+        CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
+        string nome = "Esparadrapo";
 
-        // Act / Assert
-        Assert.Throws<InvalidOperationException>(() =>
-            carrinho.RemoverItem("Microfone"));
+        // Act e Assert
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            carrinhoDeCompras.RemoverItem(nome));
+        Assert.Equal($"Item '{nome}' não encontrado no carrinho.", exception.Message);
     }
 
     // Teste 7
-    [Fact(DisplayName = "Atualizar quantidade de um item")]
-    public void AtualizarQuantidade_ItemExistente_AtualizarQuantidadeCorretamente()
+    [Fact(DisplayName = "Atualizar a quantidade de um item existente")]
+    public void AdicionarItem_AtualizarQuantidade_ItemExistente_QuantidadeAtualizada()
     {
         // Arrange
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        carrinho.AdicionarItem("Headset", 150, 1);
+        CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
+        carrinhoDeCompras.AdicionarItem("Headset", 150, 1);
 
         // Act
-        carrinho.AtualizarQuantidade("Headset", 5);
+        carrinhoDeCompras.AtualizarQuantidade("Headset", 5);
 
         // Assert
-        Assert.Equal(5, carrinho.QuantidadeDeItens);
+        Assert.Equal(5, carrinhoDeCompras.Itens[0].Quantidade);
+        Assert.Equal(5, carrinhoDeCompras.QuantidadeDeItens);
     }
 
     // Teste 8
@@ -138,47 +143,50 @@ public class CarrinhoDeComprasTests
     }
 
     // Teste 9
-    [Fact(DisplayName = "Não aplicar desconto inválido")]
-    public void AplicarDesconto_DescontoInvalido_LancarArgumentException()
+    [Fact(DisplayName = "Aplicar um desconto inválido")]
+    public void AplicarDesconto_DescontoInvalido_LancaArgumento()
     {
         // Arrange
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
+        CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
 
-        // Act / Assert
-        Assert.Throws<ArgumentException>(() =>
-            carrinho.AplicarDesconto(101));
+        // Act e Assert
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            carrinhoDeCompras.AplicarDesconto(101));
+        Assert.Equal(
+            "O percentual de desconto deve estar entre 0 e 100. (Parameter 'percentual')",
+            exception.Message);
     }
 
     // Teste 10
-    [Fact(DisplayName = "Esvaziar carrinho")]
-    public void Esvaziar_CarrinhoComItem_DeixarCarrinhoVazio()
+    [Fact(DisplayName = "Esvaziar o carrinho")]
+    public void AdicionarItem_Esvaziar_CarrinhoComItens_DeixarCarrinhoVazio()
     {
         // Arrange
-        CarrinhoDeCompras carrinho = new CarrinhoDeCompras();
-        carrinho.AdicionarItem("Produto", 100, 2);
+        CarrinhoDeCompras carrinhoDeCompras = new CarrinhoDeCompras();
+        carrinhoDeCompras.AdicionarItem("Produto", 100, 2);
 
         // Act
-        carrinho.Esvaziar();
+        carrinhoDeCompras.Esvaziar();
 
         // Assert
-        Assert.True(carrinho.EstaVazio());
-        Assert.Equal(0, carrinho.CalcularTotal());
+        Assert.True(carrinhoDeCompras.EstaVazio());
+        Assert.Equal(0, carrinhoDeCompras.CalcularTotal());
     }
 }
 ```
 
 ## O que cada teste verifica
 
-1. Um item novo entra no carrinho e gera o subtotal esperado.
-2. O mesmo produto é agrupado, somando a quantidade sem duplicar a entrada.
-3. Um preço negativo gera `ArgumentException` com a mensagem esperada.
-4. Uma quantidade inválida não pode ser adicionada.
-5. Remover um item existente recalcula o subtotal.
-6. Remover um item inexistente gera `InvalidOperationException`.
-7. A quantidade de um produto existente pode ser atualizada.
-8. Um desconto válido é aplicado ao total da compra.
-9. Um desconto acima de 100% é recusado.
-10. Esvaziar remove os itens e deixa o total igual a zero.
+1. Adiciona um produto novo e confere seu subtotal.
+2. Adiciona o mesmo produto duas vezes, soma a quantidade e não duplica a entrada.
+3. Recusa um produto com preço negativo e confere a mensagem da exceção.
+4. Recusa um produto com quantidade negativa e confere a mensagem da exceção.
+5. Remove um produto existente e recalcula o subtotal.
+6. Recusa a remoção de um produto inexistente e confere a mensagem da exceção.
+7. Atualiza a quantidade de um produto existente.
+8. Aplica um desconto válido e confere o total da compra.
+9. Recusa um desconto acima de 100% e confere a mensagem da exceção.
+10. Esvazia o carrinho e confirma que o total voltou a zero.
 
 ## Como executar em outro computador
 

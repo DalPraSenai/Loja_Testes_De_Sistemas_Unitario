@@ -1,3 +1,21 @@
+# Testes reutilizáveis do Carrinho de Compras
+
+Este documento reúne a suíte de testes do `CarrinhoDeCompras` em um formato fácil
+de copiar para outro computador ou projeto.
+
+## Requisitos
+
+- .NET SDK 9
+- xUnit
+- Microsoft.NET.Test.Sdk
+- xunit.runner.visualstudio
+- Referência ao projeto que contém `CarrinhoDeCompras`
+
+## Código completo
+
+Salve o código abaixo como `CarrinhoDeComprasTests.cs` em um projeto xUnit:
+
+```csharp
 using Loja;
 using Xunit;
 
@@ -147,3 +165,36 @@ public class CarrinhoDeComprasTests
         Assert.Equal(0, carrinho.CalcularTotal());
     }
 }
+```
+
+## O que cada teste verifica
+
+1. Um item novo entra no carrinho e gera o subtotal esperado.
+2. O mesmo produto é agrupado, somando a quantidade sem duplicar a entrada.
+3. Um preço negativo gera `ArgumentException` com a mensagem esperada.
+4. Uma quantidade inválida não pode ser adicionada.
+5. Remover um item existente recalcula o subtotal.
+6. Remover um item inexistente gera `InvalidOperationException`.
+7. A quantidade de um produto existente pode ser atualizada.
+8. Um desconto válido é aplicado ao total da compra.
+9. Um desconto acima de 100% é recusado.
+10. Esvaziar remove os itens e deixa o total igual a zero.
+
+## Como executar em outro computador
+
+Na pasta da solução, execute:
+
+```powershell
+dotnet test
+```
+
+Se o projeto de testes for criado do zero:
+
+```powershell
+dotnet new xunit -n Loja.Tests
+dotnet add Loja.Tests/Loja.Tests.csproj reference Loja/Loja.csproj
+dotnet test
+```
+
+Se os namespaces ou nomes dos projetos forem diferentes, ajuste `using Loja;`,
+`namespace Loja.Tests;` e o caminho da referência.

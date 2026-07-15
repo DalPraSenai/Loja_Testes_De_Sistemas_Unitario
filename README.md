@@ -12,6 +12,10 @@ Os testes estao no arquivo:
 Loja.Tests/CarrinhoDeComprasTests.cs
 ```
 
+Uma copia documentada e pronta para reutilizacao em outro computador esta em
+`TESTES_REUTILIZAVEIS.md`. Esse arquivo inclui o codigo completo, as dependencias,
+as instrucoes de instalacao e a explicacao de cada teste.
+
 Foram criados 10 testes unitarios:
 
 1. `AdicionarItem_ItemNovo_CalculaSubtotalCorretamente`
